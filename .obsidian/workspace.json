@@ -1,0 +1,191 @@
+{
+  "main": {
+    "id": "d06f906c19bacc46",
+    "type": "split",
+    "children": [
+      {
+        "id": "df6a6c1b8696b500",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e374d028b81f185a",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          },
+          {
+            "id": "8d0217d2a5464eb6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "snippets/googleAppsScript/DMARC Data Reports.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "DMARC Data Reports"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "2d8067bf6ad02add",
+    "type": "split",
+    "children": [
+      {
+        "id": "ca8961deb1d11879",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "275fd61cc63cc7a3",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "5c921d811fdd5724",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f4592796d736fd66",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "b622ba3b58385837",
+    "type": "split",
+    "children": [
+      {
+        "id": "2965cb2e496319f7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "155516b0e721053d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "snippets/googleAppsScript/DMARC Data Reports.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for DMARC Data Reports"
+            }
+          },
+          {
+            "id": "09d08b2529af3fcb",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "snippets/googleAppsScript/DMARC Data Reports.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from DMARC Data Reports"
+            }
+          },
+          {
+            "id": "ca3c3cac6ccdfa44",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "430d4172cbd87d05",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "snippets/googleAppsScript/DMARC Data Reports.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of DMARC Data Reports"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "8d0217d2a5464eb6",
+  "lastOpenFiles": [
+    "templates/snippet-template.md",
+    "snippets/googleAppsScript/DMARC Data Reports.md",
+    "Untitled 1.canvas",
+    "Untitled.canvas",
+    "README.md"
+  ]
+}
