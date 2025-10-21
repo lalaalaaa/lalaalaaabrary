@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bedtime Joint Prep</title>
+    <style>
+        :root{
+            --deep-blue: #0F2233; 
+            --deep-green: rgba(19,38,28,.8);
+            --deep-plum: #2A1A22;
+            --oxblood: rgba(42,26,34,.8);
+            --oxblood-quiet: rgba(42,26,34,.5);
+            --undershadow: rgba(10,23,30,.75) /*#0A171E*/;
+            --warm-white: #F2ECE4;
+            --muted-white: #C7C1B9;
+            --soft-blue: #9DB6C8;
+            --overlay: rgba(234,228,218,.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Hoefler Text",-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            font-size: 16px;
+            font-weight: 100;
+            line-height: 1.3;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, var(--deep-plum) 100%) fixed;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 1rem;
+            color: var(--warm-white);
+        }
+
+        .exercise,
+        .intro-page {
+            margin: 0;
+            height: 100VH;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-bottom: 4rem !important;
+        }
+        
+        /* INTRO PAGE */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--soft-blue);
+            font-size: 2em;
+            font-family: Avenir, sans-serif;
+        }
+    
+        .moon-icon {
+            font-size: 2em;
+        }
+
+        .breathing-cue {
+            color: var(--muted-white);
+            font-style: italic;
+            text-align: center;
+        }
+        
+        /* FOOTER PROGRESS */
+        .progress-section{
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background: var(--undershadow);
+            align-items: center;
+
+        }
+
+        .progress-bar {
+            background: var(--undershadow);
+            overflow: hidden;
+            width: 50%;
+        }
+        
+        .progress-fill {
+            background: var(--overlay);
+            height: 4rem;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .footer-timer-display {
+            font-size: .8em;
+            font-weight: 100;
+            letter-spacing: .25em;
+            line-height: 1;
+            color: var(--soft-blue);
+            margin: 1.5rem 0;
+            font-variant-numeric: tabular-nums;
+            position: absolute;
+            width: 50%;
+            text-align: center;
+            top: 0;
+        }
+        
+        .timer-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 50%;
+            padding: 0 1rem;
+        }
+        
+        button {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 1rem .5rem;
+            font-size: 1.5em;
+            line-height: .9;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.inactive{ 
+            opacity: .25;
+            transform: translateY(0);
+        }
+
+        button svg{
+            height: 1.5rem;
+            width: 1.5rem;
+            stroke: var(--soft-blue) !important;
+        }
+
+        button svg *{
+            stroke: var(--soft-blue) !important;
+        }
+        
+        /* EXERCISES */
+
+        .exercise{
+            border-top: 1px solid var(--overlay);
+        }
+        .exercise-name {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: var(--soft-blue);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .exercise-duration {
+            background: var(--undershadow);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.5em;
+            letter-spacing: .125em;
+            white-space: pre;
+            font-family: Avenir, sans-serif;
+
+            text-transform: uppercase;
+        }
+        
+        .exercise-cues {
+            margin: 10px 0;
+        }
+        
+        .exercise-cues strong {
+            color: var(--soft-blue);
+            display: block;
+            font-family: Avenir, sans-serif;
+            letter-spacing: .125em;
+            line-height: 1.25rem;
+            text-transform: uppercase;
+            font-size: .7rem;
+            margin-top: 1rem;
+            font-weight: 900;
+        }
+        
+        .hypermobility-cue {
+            background: var(--overlay);
+            font-family: Avenir, sans-serif;
+            padding: .5rem;
+            margin-top: .5rem;
+            border-radius: 1px;
+            font-size: 0.8em;
+            margin-top: 2rem;
+        }
+        
+        .current-exercise {
+            background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-blue) 100%) fixed;
+            padding: 1rem;
+            margin: 0 -1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-page">
+            <div class="header">
+                <div class="moon-icon">✨</div>
+                <h1>bedtime wind-down</h1>
+                <div class="moon-icon">✨</div>
+            </div>
+            <div class="breathing-cue">
+                4-count inhale through nose, <br>6-count exhale through mouth
+            </div>
+        </div>
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div> 
+            </div>
+            <div class="timer-controls">
+                <button id="startButton" onclick="startRoutine()">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5"/><path d="M15.4137 10.941C16.1954 11.4026 16.1954 12.5974 15.4137 13.059L10.6935 15.8458C9.93371 16.2944 9 15.7105 9 14.7868L9 9.21316C9 8.28947 9.93371 7.70561 10.6935 8.15419L15.4137 10.941Z" stroke="#1C274C" stroke-width="1.5"/></svg></button>
+                <button id="pauseButton" onclick="pauseTimer()">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5"/><path d="M8 9.5C8 9.03406 8 8.80109 8.07612 8.61732C8.17761 8.37229 8.37229 8.17761 8.61732 8.07612C8.80109 8 9.03406 8 9.5 8C9.96594 8 10.1989 8 10.3827 8.07612C10.6277 8.17761 10.8224 8.37229 10.9239 8.61732C11 8.80109 11 9.03406 11 9.5V14.5C11 14.9659 11 15.1989 10.9239 15.3827C10.8224 15.6277 10.6277 15.8224 10.3827 15.9239C10.1989 16 9.96594 16 9.5 16C9.03406 16 8.80109 16 8.61732 15.9239C8.37229 15.8224 8.17761 15.6277 8.07612 15.3827C8 15.1989 8 14.9659 8 14.5V9.5Z" stroke="#1C274C" stroke-width="1.5"/><path d="M13 9.5C13 9.03406 13 8.80109 13.0761 8.61732C13.1776 8.37229 13.3723 8.17761 13.6173 8.07612C13.8011 8 14.0341 8 14.5 8C14.9659 8 15.1989 8 15.3827 8.07612C15.6277 8.17761 15.8224 8.37229 15.9239 8.61732C16 8.80109 16 9.03406 16 9.5V14.5C16 14.9659 16 15.1989 15.9239 15.3827C15.8224 15.6277 15.6277 15.8224 15.3827 15.9239C15.1989 16 14.9659 16 14.5 16C14.0341 16 13.8011 16 13.6173 15.9239C13.3723 15.8224 13.1776 15.6277 13.0761 15.3827C13 15.1989 13 14.9659 13 14.5V9.5Z" stroke="#1C274C" stroke-width="1.5"/></svg>
+                </button>
+                <button onclick="resetTimer()">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">`<circle cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5"/><path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+                <button onclick="skipExercise()">
+                    <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" stroke="#1C274C" stroke-width="1.5"/><path d="M13 8.07141L16.2215 10.3725C17.3382 11.1702 17.3382 12.8298 16.2215 13.6274L13 15.9286M7.5 15.0568V8.94317C7.5 8.1298 8.41937 7.65667 9.08124 8.12944L13.3608 11.1862C13.9191 11.5851 13.9191 12.4149 13.3608 12.8137L9.08124 15.8705C8.41937 16.3433 7.5 15.8702 7.5 15.0568Z" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round"/></svg>
+                </button>
+            </div>
+            <div class="footer-timer-display" id="timer">02:00</div>
+        </div>
+        
+        <div class="workout-section">
+            <div class="exercise" id="ex1">
+                <div class="exercise-name">
+                    <span>Cat-Cow with Holds</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Hands under shoulders, knees under hips, on carpet or mat<br>
+                    <strong>Movement</strong> Arch spine slowly, then round spine slowly<br>
+                    <strong>Tempo</strong> 5 seconds to transition, hold each position for 3 breaths<br>
+                    <strong>Focus</strong> Move from your pelvis first, let the movement ripple up your spine
+                </div>
+                <div class="hypermobility-cue">
+                    Don't collapse into full extension—stop when you feel your core engage. Think: controlled, not extreme.
+                </div>
+            </div>
+            
+            <div class="exercise" id="ex2">
+                <div class="exercise-name">
+                    <span>Quadruped Shoulder Taps</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Same position as cat-cow, find neutral spine<br>
+                    <strong>Movement</strong> Lift one hand, tap opposite shoulder, return. Alternate sides.<br>
+                    <strong>Tempo</strong> Slow and controlled—3 seconds per tap<br>
+                    <strong>Focus</strong> Your hips should NOT move. Imagine a cup of water on your lower back.
+                </div>
+                <div class="hypermobility-cue">
+                    Pack your shoulders DOWN (away from ears) before you lift your hand. Feel scapular stability.
+                </div>
+            </div>
+            
+            <div class="exercise" id="ex3">
+                <div class="exercise-name">
+                    <span>Glute Bridges with Holds</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Lie on back, feet flat, knees bent, arms at sides<br>
+                    <strong>Movement</strong> Press through heels, lift hips until straight line from knees to shoulders<br>
+                    <strong>Tempo</strong> 3 seconds up, hold for 5 seconds (squeeze glutes HARD), 3 seconds down<br>
+                    <strong>Focus</strong> Feel this in your glutes and hamstrings, NOT your lower back
+                </div>
+                <div class="hypermobility-cue">
+                    Don't overarch into lumbar extension. Stop lifting when you feel glutes max out. Tuck tailbone slightly.
+                </div>
+            </div>
+            
+            <div class="exercise" id="ex4">
+                <div class="exercise-name">
+                    <span>Dead Bugs (Slow Tempo)</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Lie on back, arms straight up toward ceiling, knees bent 90°<br>
+                    <strong>Movement</strong> Slowly lower opposite arm and leg, keeping lower back flat on floor<br>
+                    <strong>Tempo</strong> 5 seconds down, 5 seconds back up. Exhale as you extend.<br>
+                    <strong>Focus</strong> Press lower back into floor throughout. Feel your deep core working.
+                </div>
+                <div class="hypermobility-cue">
+                    The moment your lower back arches off the floor, STOP. Shorten your range until you can control it.
+                </div>
+            </div>
+            
+            <div class="exercise" id="ex5">
+                <div class="exercise-name">
+                    <span>90/90 Hip Transitions</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Sit on floor, both knees bent 90°, <br>one leg internal rotation, one external<br>
+                    <strong>Movement</strong> Slowly windshield-wiper your legs to switch positions<br>
+                    <strong>Tempo</strong> 5-7 seconds to transition, no momentum<br>
+                    <strong>Focus</strong> Keep chest tall, don't use hands to push off floor
+                </div>
+                <div class="hypermobility-cue">
+                    Don't flop into your hip flexibility. Control the movement with your hip rotators and core.
+                </div>
+            </div>
+            
+            <div class="exercise" id="ex6">
+                <div class="exercise-name">
+                    <span>Body Scan Wind-Down</span>
+                    <span class="exercise-duration">2 min</span>
+                </div>
+                <div class="exercise-cues">
+                    <strong>Setup</strong> Lie on back in a comfortable position<br>
+                    <strong>Practice</strong> Close eyes. Mentally scan from toes to head, noticing sensations.<br>
+                    <strong>Breathing</strong> Continue slow, deep breaths. Let your body get heavy.<br>
+                    <strong>Purpose</strong> Signal to your nervous system that it's safe to sleep.
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <script>
+        let currentExercise = 1;
+        let timeRemaining = 120; // 2 min per exercise
+        let isPaused = true;
+        let intervalId = null;
+        
+        const exercises = [
+            { name: "Cat-Cow with Holds", duration: 120 },
+            { name: "Quadruped Shoulder Taps", duration: 120 },
+            { name: "Glute Bridges with Holds", duration: 120 },
+            { name: "Dead Bugs (Slow Tempo)", duration: 120 },
+            { name: "90/90 Hip Transitions", duration: 120 },
+            { name: "Body Scan Wind-Down", duration: 120 }
+        ];
+        
+        function updateDisplay() {
+            const min = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${min.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            
+            // Highlight current exercise
+            document.querySelectorAll('.exercise').forEach((el, idx) => {
+                el.classList.remove('current-exercise');
+                console.log(idx);
+                console.log(currentExercise);
+                if (idx === currentExercise - 1) {
+                    el.classList.add('current-exercise');
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+            
+            // Update progress bar
+            const totalTime = exercises.reduce((sum, ex) => sum + ex.duration, 0);
+            const elapsedTime = exercises.slice(0, currentExercise - 1).reduce((sum, ex) => sum + ex.duration, 0) + 
+                               (exercises[currentExercise - 1].duration - timeRemaining);
+            const progress = Math.round((elapsedTime / totalTime) * 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+            //document.getElementById('progressBar').textContent = progress + '%';
+        }
+        
+        function tick() {
+            if (isPaused) return;
+            
+            timeRemaining--;
+            
+            if (timeRemaining <= 0) {
+                currentExercise++;
+                
+                if (currentExercise > exercises.length) {
+                    // Routine complete
+                    clearInterval(intervalId);
+                    document.getElementById('currentExercise').textContent = '✨ Routine Complete - Time for Bed';
+                    document.getElementById('timer').textContent = '00:00';
+                    document.getElementById('progressBar').style.width = '100%';
+                    //document.getElementById('progressBar').textContent = '100%';
+                    isPaused = true;
+                    return;
+                }
+                
+                timeRemaining = exercises[currentExercise - 1].duration;
+            }
+            
+            updateDisplay();
+        }
+        
+        function startRoutine() {
+            if (!isPaused) return;
+            document.getElementById('startButton').classList.add('inactive');
+            document.getElementById('pauseButton').classList.remove('inactive');
+            isPaused = false;
+            intervalId = setInterval(tick, 1000);
+        }
+        
+        function pauseTimer() {
+            isPaused = true;
+            document.getElementById('startButton').classList.remove('inactive');
+            document.getElementById('pauseButton').classList.add('inactive');
+            if (intervalId) clearInterval(intervalId);
+        }
+        
+        function resetTimer() {
+            pauseTimer();
+            currentExercise = 1;
+            timeRemaining = exercises[0].duration;
+            updateDisplay();
+        }
+        
+        function skipExercise() {
+            if (currentExercise >= exercises.length) return;
+            currentExercise++;
+            timeRemaining = exercises[currentExercise - 1].duration;
+            updateDisplay();
+        }
+        
+        // Initialize display
+        //updateDisplay();
+    </script>
+</body>
+</html>
