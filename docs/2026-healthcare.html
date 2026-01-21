@@ -12,7 +12,7 @@
         }
         
         body {
-            font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: "DM Sans",-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             padding: 20px;
             background: #fafafa;
         }
@@ -193,13 +193,16 @@
     </style>
 </head>
 <body>
+
+<p><b>Important!</b> Estimate how much healthcare you'll use.</p><br />
+
     <div class="container">
-        <h1>2026 Comic Relief Health Insurance Plan Comparison</h1>
+        <h1>Health Insurance Plan Comparison Calculator</h1>
         
         <!-- Assumed Costs Section -->
         <div class="section">
             <h2>Assumed Service Costs</h2>
-            <p><i>Optional.</i> Customize the estimated healthcare services costs without insurance.</p><br />
+            <p><i>Optional.</i> Estimates the healthcare costs without insurance; override the defaults if you know specifics.</p><br />
             <div class="grid" id="assumedCostsGrid"></div>
         </div>
 
@@ -208,6 +211,15 @@
             <h2>Expected Annual Usage</h2>
             <p><b>Important!</b> Estimate how much healthcare you'll use.</p><br />
             <div class="grid" id="usageGrid"></div>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
+                <div class="input-group" style="max-width: 300px;">
+                    <label>Your Total Tax Rate (Federal + State + FICA) %</label>
+                    <input type="number" id="taxRateInput" value="30" min="0" max="50" step="0.5">
+                    <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                        HSA contributions reduce taxable income. FSA limited to $3,200/year.
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Results Section -->
@@ -220,8 +232,9 @@
         <div class="notes">
             <strong>💡 How This Works:</strong>
             <ul>
-                <li><strong>HDHP Plans:</strong> Single deductible applies to all services, then copays/coinsurance kick in. HSA-eligible.</li>
-                <li><strong>Copay Plans:</strong> Separate medical and Rx deductibles. Pay full cost until each deductible is met, then copays apply.</li>
+                <li><strong>HDHP Plans:</strong> Single deductible applies to all services, then copays/coinsurance kick in. HSA-eligible with unlimited tax-deductible contributions (up to IRS limits).</li>
+                <li><strong>Copay Plans:</strong> Separate medical and Rx deductibles. Pay full cost until each deductible is met, then copays apply. FSA-eligible with $3,200 annual limit.</li>
+                <li><strong>Tax Benefits:</strong> HSA/FSA contributions reduce taxable income. The calculator shows after-tax costs assuming you maximize available tax benefits.</li>
                 <li>Premiums are semi-monthly (×24 for annual total)</li>
                 <li>All costs are capped at the out-of-pocket maximum</li>
                 <li>Adjust "Assumed Service Costs" to match your plan's negotiated rates</li>
@@ -481,6 +494,10 @@
             rxTier4: 0
         };
 
+        // Tax rate for HSA/FSA benefits
+        let taxRate = 30; // percentage
+        const FSA_LIMIT = 3200; // 2026 FSA contribution limit
+
         // Helper to format currency
         function formatCurrency(value) {
             return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -600,10 +617,23 @@
             
             totalOOP = Math.min(totalOOP, plan.oopMax);
             
+            // Calculate tax savings
+            let taxSavings = 0;
+            if (plan.type === 'HDHP') {
+                // HSA: tax savings on full OOP amount
+                taxSavings = totalOOP * (taxRate / 100);
+            } else {
+                // FSA: tax savings capped at $3,200 limit
+                const fsaContribution = Math.min(totalOOP, FSA_LIMIT);
+                taxSavings = fsaContribution * (taxRate / 100);
+            }
+            
             return {
                 premium: annualPremium,
                 oop: totalOOP,
                 total: annualPremium + totalOOP,
+                taxSavings: taxSavings,
+                afterTaxTotal: annualPremium + totalOOP - taxSavings,
                 medDeductibleMet: medDeductibleUsed >= plan.medDeductible,
                 medDeductibleUsed: medDeductibleUsed,
                 rxDeductibleMet: plan.rxDeductible > 0 ? rxDeductibleUsed >= plan.rxDeductible : null,
@@ -667,14 +697,14 @@
             }));
             
             const bestPlan = results.reduce((best, current) => 
-                current.costs.total < best.costs.total ? current : best
+                current.costs.afterTaxTotal < best.costs.afterTaxTotal ? current : best
             );
             
             const grid = document.getElementById('resultsGrid');
             grid.innerHTML = '';
             
             results.forEach(({ plan, costs }) => {
-                const isBest = costs.total === bestPlan.costs.total;
+                const isBest = costs.afterTaxTotal === bestPlan.costs.afterTaxTotal;
                 
                 const card = document.createElement('div');
                 card.className = `plan-card ${isBest ? 'best' : ''}`;
@@ -686,6 +716,8 @@
                 const hsaBadge = plan.type === 'HDHP' 
                     ? '<span class="hsa-badge">HSA</span>' 
                     : '';
+                
+                const taxBenefitLabel = plan.type === 'HDHP' ? 'HSA Tax Savings' : 'FSA Tax Savings';
                 
                 let deductibleStatus = '';
                 if (costs.medDeductibleMet) {
@@ -712,7 +744,7 @@
                         ${deductibleInfo} | OOP Max: $${plan.oopMax.toLocaleString()}${hsaBadge}
                     </div>
                     <div class="total-cost">
-                        $${formatCurrency(costs.total)}
+                        $${formatCurrency(costs.afterTaxTotal)}
                         <span class="year">/yr</span>
                     </div>
                     <div class="cost-breakdown">
@@ -723,6 +755,14 @@
                         <div class="cost-row">
                             <span>Out-of-Pocket:</span>
                             <strong>$${formatCurrency(costs.oop)}</strong>
+                        </div>
+                        <div class="cost-row" style="color: #4CAF50;">
+                            <span>${taxBenefitLabel} (${taxRate}%):</span>
+                            <strong>-$${formatCurrency(costs.taxSavings)}</strong>
+                        </div>
+                        <div class="cost-row small" style="padding-top: 8px; border-top: 1px solid #eee;">
+                            <span style="font-weight: 600;">After-Tax Total:</span>
+                            <span style="font-weight: 600;">$${formatCurrency(costs.afterTaxTotal)}</span>
                         </div>
                         <div class="cost-row small">
                             <span>Med Deductible Used:</span>
@@ -741,6 +781,12 @@
         renderAssumedCosts();
         renderUsage();
         renderResults();
+        
+        // Tax rate input listener
+        document.getElementById('taxRateInput').addEventListener('input', (e) => {
+            taxRate = parseFloat(e.target.value) || 0;
+            renderResults();
+        });
     </script>
 </body>
 </html>
