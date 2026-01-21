@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Insurance Plan Comparison Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 20px;
+            background: #fafafa;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #444;
+            font-size: 1.5em;
+        }
+        
+        .section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .section.usage {
+            background: #e8f4f8;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .plan-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            background: white;
+        }
+        
+        .plan-card.best {
+            border: 3px solid #4CAF50;
+            background: #f1f8f4;
+        }
+        
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .plan-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .best-badge {
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .plan-meta {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .hsa-badge {
+            margin-left: 8px;
+            padding: 2px 6px;
+            background: #e3f2fd;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        
+        .total-cost {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .total-cost .year {
+            font-size: 16px;
+            color: #666;
+            font-weight: normal;
+        }
+        
+        .cost-breakdown {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            font-size: 14px;
+        }
+        
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .cost-row.small {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .deductible-met {
+            margin-top: 10px;
+            padding: 8px;
+            background: #fff3cd;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #856404;
+        }
+        
+        .notes {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .notes ul {
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+        
+        .notes li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Health Insurance Plan Comparison Calculator</h1>
+        
+        <!-- Assumed Costs Section -->
+        <div class="section">
+            <h2>Assumed Service Costs</h2>
+            <div class="grid" id="assumedCostsGrid"></div>
+        </div>
+
+        <!-- Usage Estimates Section -->
+        <div class="section usage">
+            <h2>Expected Annual Usage</h2>
+            <div class="grid" id="usageGrid"></div>
+        </div>
+
+        <!-- Results Section -->
+        <div>
+            <h2>Plan Comparison Results</h2>
+            <div class="results-grid" id="resultsGrid"></div>
+        </div>
+
+        <!-- Notes -->
+        <div class="notes">
+            <strong>💡 How This Works:</strong>
+            <ul>
+                <li><strong>HDHP Plans:</strong> Single deductible applies to all services, then copays/coinsurance kick in. HSA-eligible.</li>
+                <li><strong>Copay Plans:</strong> Separate medical and Rx deductibles. Pay full cost until each deductible is met, then copays apply.</li>
+                <li>Premiums are semi-monthly (×24 for annual total)</li>
+                <li>All costs are capped at the out-of-pocket maximum</li>
+                <li>Adjust "Assumed Service Costs" to match your plan's negotiated rates</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Plan configurations
+        const plans = [
+            // HDHP Plans (HSA-eligible, single deductible)
+            {
+                name: 'HDHP 1700',
+                type: 'HDHP',
+                premium: 123.67,
+                medDeductible: 1700,
+                rxDeductible: 0,
+                oopMax: 4500,
+                primaryCopay: null,
+                primaryCoinsurance: 10,
+                specialistCopay: null,
+                specialistCoinsurance: 10,
+                urgentCareCopay: null,
+                urgentCareCoinsurance: 10,
+                erCopay: null,
+                erCoinsurance: 10,
+                rxGenericCopay: 10,
+                rxBrandCopay: 35,
+                rxTier3Copay: 60,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'HDHP 3400',
+                type: 'HDHP',
+                premium: 50.65,
+                medDeductible: 3400,
+                rxDeductible: 0,
+                oopMax: 7000,
+                primaryCopay: null,
+                primaryCoinsurance: 10,
+                specialistCopay: null,
+                specialistCoinsurance: 10,
+                urgentCareCopay: null,
+                urgentCareCoinsurance: 10,
+                erCopay: null,
+                erCoinsurance: 10,
+                rxGenericCopay: 10,
+                rxBrandCopay: 35,
+                rxTier3Copay: 60,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'HDHP 5000',
+                type: 'HDHP',
+                premium: 8.72,
+                medDeductible: 5000,
+                rxDeductible: 0,
+                oopMax: 7150,
+                primaryCopay: null,
+                primaryCoinsurance: 20,
+                specialistCopay: null,
+                specialistCoinsurance: 20,
+                urgentCareCopay: null,
+                urgentCareCoinsurance: 20,
+                erCopay: null,
+                erCoinsurance: 20,
+                rxGenericCopay: 10,
+                rxBrandCopay: 35,
+                rxTier3Copay: 60,
+                rxTier4Copay: 120
+            },
+            // Primary Advantage Plans
+            {
+                name: 'Primary Advantage 2000',
+                type: 'Copay',
+                premium: 48.76,
+                medDeductible: 2000,
+                rxDeductible: 250,
+                oopMax: 6500,
+                primaryCopay: 0,
+                primaryCoinsurance: null,
+                specialistCopay: 100,
+                specialistCoinsurance: null,
+                urgentCareCopay: 50,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: 20,
+                rxGenericCopay: 5,
+                rxBrandCopay: 50,
+                rxTier3Copay: 100,
+                rxTier4Copay: 250
+            },
+            {
+                name: 'Primary Advantage 4500',
+                type: 'Copay',
+                premium: 33.69,
+                medDeductible: 4500,
+                rxDeductible: 250,
+                oopMax: 9200,
+                primaryCopay: 0,
+                primaryCoinsurance: null,
+                specialistCopay: 100,
+                specialistCoinsurance: null,
+                urgentCareCopay: 50,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: 0,
+                rxGenericCopay: 5,
+                rxBrandCopay: 50,
+                rxTier3Copay: 100,
+                rxTier4Copay: 250
+            },
+            {
+                name: 'Primary Advantage 5000',
+                type: 'Copay',
+                premium: 5.43,
+                medDeductible: 5000,
+                rxDeductible: 250,
+                oopMax: 6500,
+                primaryCopay: 0,
+                primaryCoinsurance: null,
+                specialistCopay: 100,
+                specialistCoinsurance: null,
+                urgentCareCopay: 50,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: 20,
+                rxGenericCopay: 5,
+                rxBrandCopay: 50,
+                rxTier3Copay: 100,
+                rxTier4Copay: 250
+            },
+            // Choice Plus Plans
+            {
+                name: 'Choice Plus 500/80',
+                type: 'Copay',
+                premium: 148.64,
+                medDeductible: 500,
+                rxDeductible: 150,
+                oopMax: 5000,
+                primaryCopay: 35,
+                primaryCoinsurance: null,
+                specialistCopay: 65,
+                specialistCoinsurance: null,
+                urgentCareCopay: 75,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: null,
+                rxGenericCopay: 10,
+                rxBrandCopay: 40,
+                rxTier3Copay: 65,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'Choice Plus 1000',
+                type: 'Copay',
+                premium: 136.86,
+                medDeductible: 1000,
+                rxDeductible: 150,
+                oopMax: 5000,
+                primaryCopay: 35,
+                primaryCoinsurance: null,
+                specialistCopay: 65,
+                specialistCoinsurance: null,
+                urgentCareCopay: 75,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: null,
+                rxGenericCopay: 10,
+                rxBrandCopay: 40,
+                rxTier3Copay: 65,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'Choice Plus 1500',
+                type: 'Copay',
+                premium: 114.72,
+                medDeductible: 1500,
+                rxDeductible: 150,
+                oopMax: 6350,
+                primaryCopay: 35,
+                primaryCoinsurance: null,
+                specialistCopay: 65,
+                specialistCoinsurance: null,
+                urgentCareCopay: 75,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: null,
+                rxGenericCopay: 10,
+                rxBrandCopay: 40,
+                rxTier3Copay: 65,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'Choice Plus 2500',
+                type: 'Copay',
+                premium: 83.63,
+                medDeductible: 2500,
+                rxDeductible: 150,
+                oopMax: 6850,
+                primaryCopay: 40,
+                primaryCoinsurance: null,
+                specialistCopay: 75,
+                specialistCoinsurance: null,
+                urgentCareCopay: 75,
+                urgentCareCoinsurance: null,
+                erCopay: 250,
+                erCoinsurance: null,
+                rxGenericCopay: 10,
+                rxBrandCopay: 45,
+                rxTier3Copay: 70,
+                rxTier4Copay: 120
+            },
+            {
+                name: 'Choice Plus 6000',
+                type: 'Copay',
+                premium: 58.19,
+                medDeductible: 6000,
+                rxDeductible: 200,
+                oopMax: 8500,
+                primaryCopay: 40,
+                primaryCoinsurance: null,
+                specialistCopay: 75,
+                specialistCoinsurance: null,
+                urgentCareCopay: 75,
+                urgentCareCoinsurance: null,
+                erCopay: 500,
+                erCoinsurance: null,
+                rxGenericCopay: 10,
+                rxBrandCopay: 45,
+                rxTier3Copay: 70,
+                rxTier4Copay: 120
+            }
+        ];
+
+        // Assumed service costs
+        let assumedCosts = {
+            primaryVisit: 200,
+            specialistVisit: 300,
+            urgentCare: 150,
+            emergency: 2500,
+            rxGeneric: 50,
+            rxBrand: 200,
+            rxTier3: 400,
+            rxTier4: 800
+        };
+
+        // Usage estimates
+        let usage = {
+            primaryVisits: 2,
+            specialistVisits: 1,
+            urgentCare: 0,
+            emergency: 0,
+            rxGeneric: 12,
+            rxBrand: 0,
+            rxTier3: 0,
+            rxTier4: 0
+        };
+
+        // Helper to format currency
+        function formatCurrency(value) {
+            return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Helper to convert camelCase to Title Case
+        function toTitleCase(str) {
+            return str.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+        }
+
+        // Calculate costs for a single plan
+        function calculatePlanCost(plan) {
+            const annualPremium = plan.premium * 24;
+            
+            let totalOOP = 0;
+            let medDeductibleUsed = 0;
+            let rxDeductibleUsed = 0;
+            
+            // Helper for HDHP plans
+            function calculateHDHPServiceCost(quantity, fullCost, coinsuranceRate, copay = null) {
+                let cost = 0;
+                
+                for (let i = 0; i < quantity; i++) {
+                    const remaining = plan.medDeductible - medDeductibleUsed;
+                    
+                    if (remaining > 0) {
+                        const deductiblePortion = Math.min(fullCost, remaining);
+                        cost += deductiblePortion;
+                        medDeductibleUsed += deductiblePortion;
+                        
+                        if (fullCost > deductiblePortion) {
+                            const afterDeductible = fullCost - deductiblePortion;
+                            cost += copay !== null ? copay : (afterDeductible * coinsuranceRate / 100);
+                        }
+                    } else {
+                        cost += copay !== null ? copay : (fullCost * coinsuranceRate / 100);
+                    }
+                }
+                
+                return cost;
+            }
+            
+            // Helper for Copay plans - Medical
+            function calculateCopayPlanMedicalCost(quantity, fullCost, copay, coinsuranceRate = null) {
+                let cost = 0;
+                
+                for (let i = 0; i < quantity; i++) {
+                    const remaining = plan.medDeductible - medDeductibleUsed;
+                    
+                    if (remaining > 0) {
+                        const deductiblePortion = Math.min(fullCost, remaining);
+                        cost += deductiblePortion;
+                        medDeductibleUsed += deductiblePortion;
+                        
+                        if (fullCost > deductiblePortion) {
+                            if (copay !== null) {
+                                cost += copay;
+                            } else if (coinsuranceRate !== null) {
+                                cost += (fullCost - deductiblePortion) * coinsuranceRate / 100;
+                            }
+                        }
+                    } else {
+                        if (copay !== null) {
+                            cost += copay;
+                        } else if (coinsuranceRate !== null) {
+                            cost += fullCost * coinsuranceRate / 100;
+                        }
+                    }
+                }
+                
+                return cost;
+            }
+            
+            // Helper for Copay plans - Rx
+            function calculateCopayPlanRxCost(quantity, fullCost, copay) {
+                let cost = 0;
+                
+                for (let i = 0; i < quantity; i++) {
+                    const remaining = plan.rxDeductible - rxDeductibleUsed;
+                    
+                    if (remaining > 0) {
+                        const deductiblePortion = Math.min(fullCost, remaining);
+                        cost += deductiblePortion;
+                        rxDeductibleUsed += deductiblePortion;
+                        
+                        if (fullCost > deductiblePortion) {
+                            cost += copay;
+                        }
+                    } else {
+                        cost += copay;
+                    }
+                }
+                
+                return cost;
+            }
+            
+            // Calculate based on plan type
+            if (plan.type === 'HDHP') {
+                totalOOP += calculateHDHPServiceCost(usage.primaryVisits, assumedCosts.primaryVisit, plan.primaryCoinsurance);
+                totalOOP += calculateHDHPServiceCost(usage.specialistVisits, assumedCosts.specialistVisit, plan.specialistCoinsurance);
+                totalOOP += calculateHDHPServiceCost(usage.urgentCare, assumedCosts.urgentCare, plan.urgentCareCoinsurance);
+                totalOOP += calculateHDHPServiceCost(usage.emergency, assumedCosts.emergency, plan.erCoinsurance);
+                totalOOP += calculateHDHPServiceCost(usage.rxGeneric, assumedCosts.rxGeneric, 0, plan.rxGenericCopay);
+                totalOOP += calculateHDHPServiceCost(usage.rxBrand, assumedCosts.rxBrand, 0, plan.rxBrandCopay);
+                totalOOP += calculateHDHPServiceCost(usage.rxTier3, assumedCosts.rxTier3, 0, plan.rxTier3Copay);
+                totalOOP += calculateHDHPServiceCost(usage.rxTier4, assumedCosts.rxTier4, 0, plan.rxTier4Copay);
+            } else {
+                totalOOP += calculateCopayPlanMedicalCost(usage.primaryVisits, assumedCosts.primaryVisit, plan.primaryCopay, plan.primaryCoinsurance);
+                totalOOP += calculateCopayPlanMedicalCost(usage.specialistVisits, assumedCosts.specialistVisit, plan.specialistCopay, plan.specialistCoinsurance);
+                totalOOP += calculateCopayPlanMedicalCost(usage.urgentCare, assumedCosts.urgentCare, plan.urgentCareCopay, plan.urgentCareCoinsurance);
+                totalOOP += calculateCopayPlanMedicalCost(usage.emergency, assumedCosts.emergency, plan.erCopay, plan.erCoinsurance);
+                totalOOP += calculateCopayPlanRxCost(usage.rxGeneric, assumedCosts.rxGeneric, plan.rxGenericCopay);
+                totalOOP += calculateCopayPlanRxCost(usage.rxBrand, assumedCosts.rxBrand, plan.rxBrandCopay);
+                totalOOP += calculateCopayPlanRxCost(usage.rxTier3, assumedCosts.rxTier3, plan.rxTier3Copay);
+                totalOOP += calculateCopayPlanRxCost(usage.rxTier4, assumedCosts.rxTier4, plan.rxTier4Copay);
+            }
+            
+            totalOOP = Math.min(totalOOP, plan.oopMax);
+            
+            return {
+                premium: annualPremium,
+                oop: totalOOP,
+                total: annualPremium + totalOOP,
+                medDeductibleMet: medDeductibleUsed >= plan.medDeductible,
+                medDeductibleUsed: medDeductibleUsed,
+                rxDeductibleMet: plan.rxDeductible > 0 ? rxDeductibleUsed >= plan.rxDeductible : null,
+                rxDeductibleUsed: plan.rxDeductible > 0 ? rxDeductibleUsed : null
+            };
+        }
+
+        // Render assumed costs inputs
+        function renderAssumedCosts() {
+            const grid = document.getElementById('assumedCostsGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(assumedCosts).forEach(key => {
+                const div = document.createElement('div');
+                div.className = 'input-group';
+                div.innerHTML = `
+                    <label>${toTitleCase(key)}</label>
+                    <input type="number" value="${assumedCosts[key]}" data-key="${key}" class="assumed-cost-input">
+                `;
+                grid.appendChild(div);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.assumed-cost-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    assumedCosts[e.target.dataset.key] = parseFloat(e.target.value) || 0;
+                    renderResults();
+                });
+            });
+        }
+
+        // Render usage inputs
+        function renderUsage() {
+            const grid = document.getElementById('usageGrid');
+            grid.innerHTML = '';
+            
+            Object.keys(usage).forEach(key => {
+                const div = document.createElement('div');
+                div.className = 'input-group';
+                div.innerHTML = `
+                    <label>${toTitleCase(key)}</label>
+                    <input type="number" value="${usage[key]}" data-key="${key}" class="usage-input">
+                `;
+                grid.appendChild(div);
+            });
+            
+            // Add event listeners
+            document.querySelectorAll('.usage-input').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    usage[e.target.dataset.key] = parseInt(e.target.value) || 0;
+                    renderResults();
+                });
+            });
+        }
+
+        // Render results
+        function renderResults() {
+            const results = plans.map(plan => ({
+                plan,
+                costs: calculatePlanCost(plan)
+            }));
+            
+            const bestPlan = results.reduce((best, current) => 
+                current.costs.total < best.costs.total ? current : best
+            );
+            
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+            
+            results.forEach(({ plan, costs }) => {
+                const isBest = costs.total === bestPlan.costs.total;
+                
+                const card = document.createElement('div');
+                card.className = `plan-card ${isBest ? 'best' : ''}`;
+                
+                const deductibleInfo = plan.type === 'HDHP' 
+                    ? `Deductible: $${plan.medDeductible.toLocaleString()}`
+                    : `Med Ded: $${plan.medDeductible.toLocaleString()} | Rx Ded: $${plan.rxDeductible.toLocaleString()}`;
+                
+                const hsaBadge = plan.type === 'HDHP' 
+                    ? '<span class="hsa-badge">HSA</span>' 
+                    : '';
+                
+                let deductibleStatus = '';
+                if (costs.medDeductibleMet) {
+                    deductibleStatus = '<div class="deductible-met">✓ Med deductible met';
+                    if (costs.rxDeductibleMet) {
+                        deductibleStatus += ' • Rx deductible met';
+                    }
+                    deductibleStatus += '</div>';
+                }
+                
+                const rxDeductibleRow = costs.rxDeductibleUsed !== null 
+                    ? `<div class="cost-row small">
+                        <span>Rx Deductible Used:</span>
+                        <span>$${formatCurrency(costs.rxDeductibleUsed)}</span>
+                    </div>`
+                    : '';
+                
+                card.innerHTML = `
+                    <div class="plan-header">
+                        <div class="plan-name">${plan.name}</div>
+                        ${isBest ? '<div class="best-badge">BEST VALUE</div>' : ''}
+                    </div>
+                    <div class="plan-meta">
+                        ${deductibleInfo} | OOP Max: $${plan.oopMax.toLocaleString()}${hsaBadge}
+                    </div>
+                    <div class="total-cost">
+                        $${formatCurrency(costs.total)}
+                        <span class="year">/yr</span>
+                    </div>
+                    <div class="cost-breakdown">
+                        <div class="cost-row">
+                            <span>Premium ($${plan.premium}/sm × 24):</span>
+                            <strong>$${formatCurrency(costs.premium)}</strong>
+                        </div>
+                        <div class="cost-row">
+                            <span>Out-of-Pocket:</span>
+                            <strong>$${formatCurrency(costs.oop)}</strong>
+                        </div>
+                        <div class="cost-row small">
+                            <span>Med Deductible Used:</span>
+                            <span>$${formatCurrency(costs.medDeductibleUsed)}</span>
+                        </div>
+                        ${rxDeductibleRow}
+                        ${deductibleStatus}
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Initial render
+        renderAssumedCosts();
+        renderUsage();
+        renderResults();
+    </script>
+</body>
+</html>
