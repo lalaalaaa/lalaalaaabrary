@@ -612,6 +612,35 @@
                 
                 return cost;
             }
+
+                        // Special handler for Primary Advantage ER (stacks deductible + copay + coinsurance)
+            function calculatePrimaryAdvantageER(quantity, fullCost, copay, coinsuranceRate) {
+                let cost = 0;
+                
+                for (let i = 0; i < quantity; i++) {
+                    const remaining = plan.medDeductible - medDeductibleUsed;
+                    
+                    if (remaining > 0) {
+                        // Pay toward deductible first
+                        const deductiblePortion = Math.min(fullCost, remaining);
+                        cost += deductiblePortion;
+                        medDeductibleUsed += deductiblePortion;
+                        
+                        // If deductible is met during this visit, stack copay + coinsurance on remainder
+                        if (fullCost > deductiblePortion) {
+                            const afterDeductible = fullCost - deductiblePortion;
+                            cost += copay; // Add copay
+                            cost += afterDeductible * coinsuranceRate / 100; // Add coinsurance on remainder
+                        }
+                    } else {
+                        // Deductible already met - stack copay + coinsurance
+                        cost += copay;
+                        cost += fullCost * coinsuranceRate / 100;
+                    }
+                }
+                
+                return cost;
+            }
             
             // Calculate based on plan type
             if (plan.type === 'HDHP') {
@@ -627,9 +656,19 @@
                 totalOOP += calculateCopayPlanMedicalCost(usage.primaryVisits, assumedCosts.primaryVisit, plan.primaryCopay, plan.primaryCoinsurance);
                 totalOOP += calculateCopayPlanMedicalCost(usage.specialistVisits, assumedCosts.specialistVisit, plan.specialistCopay, plan.specialistCoinsurance);
                 totalOOP += calculateCopayPlanMedicalCost(usage.urgentCare, assumedCosts.urgentCare, plan.urgentCareCopay, plan.urgentCareCoinsurance);
-                totalOOP += calculateCopayPlanMedicalCost(usage.emergency, assumedCosts.emergency, plan.erCopay, plan.erCoinsurance);
-                totalOOP += calculateCopayPlanRxCost(usage.rxGeneric, assumedCosts.rxGeneric, plan.rxGenericCopay);
-                totalOOP += calculateCopayPlanRxCost(usage.rxBrand, assumedCosts.rxBrand, plan.rxBrandCopay);
+                
+                // Check if Primary Advantage plan (has both ER copay AND coinsurance)
+                if (plan.erCopay !== null && plan.erCoinsurance !== null && plan.erCoinsurance > 0) {
+                    totalOOP += calculatePrimaryAdvantageER(usage.emergency, assumedCosts.emergency, plan.erCopay, plan.erCoinsurance);
+                } else {
+                    totalOOP += calculateCopayPlanMedicalCost(usage.emergency, assumedCosts.emergency, plan.erCopay, plan.erCoinsurance);
+                }
+                
+                // Tier 1 & 2 Rx copays apply immediately (no Rx deductible)
+                totalOOP += usage.rxGeneric * plan.rxGenericCopay;
+                totalOOP += usage.rxBrand * plan.rxBrandCopay;
+
+                // Tier 3 & 4 Rx use the Rx deductible
                 totalOOP += calculateCopayPlanRxCost(usage.rxTier3, assumedCosts.rxTier3, plan.rxTier3Copay);
                 totalOOP += calculateCopayPlanRxCost(usage.rxTier4, assumedCosts.rxTier4, plan.rxTier4Copay);
             }
